@@ -6,21 +6,15 @@ import os
 import gdown
 
 # Page config
-st.set_page_config(page_title="Movie Recommender", page_icon="🎬", layout="wide")
+st.set_page_config(page_title="CineMatch", page_icon="🎬", layout="wide")
 
-# Netflix Dark UI CSS
+# Dark UI CSS
 st.markdown("""
 <style>
 
 .stApp {
     background-color: #0f0f0f;
     color: white;
-}
-
-h1 {
-    color: #E50914;
-    text-align: center;
-    font-size: 50px;
 }
 
 .stButton>button {
@@ -66,10 +60,10 @@ movies = pd.DataFrame(movies_dict)
 similarity = pickle.load(open('similarity.pkl','rb'))
 
 
-# Poster fetch function
+# Fetch movie poster
 def fetch_poster(movie_id):
 
-    url = "https://api.themoviedb.org/3/movie/{}?api_key=3f666f231d759054c3df8192952f5b63&language=en-US".format(movie_id)
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=3f666f231d759054c3df8192952f5b63&language=en-US"
 
     response = requests.get(url)
 
@@ -81,15 +75,14 @@ def fetch_poster(movie_id):
 # Recommendation function
 def recommend(movie):
 
-    movie_index = movies[movies['title']==movie].index[0]
+    movie_index = movies[movies['title'] == movie].index[0]
 
     distances = similarity[movie_index]
 
-    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x:x[1])[1:6]
+    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
 
     recommended_movies = []
-
-    recommended_movie_posters = []
+    recommended_posters = []
 
     for i in movies_list:
 
@@ -97,13 +90,25 @@ def recommend(movie):
 
         recommended_movies.append(movies.iloc[i[0]].title)
 
-        recommended_movie_posters.append(fetch_poster(movie_id))
+        recommended_posters.append(fetch_poster(movie_id))
 
-    return recommended_movies, recommended_movie_posters
+    return recommended_movies, recommended_posters
 
 
-# Title
-st.markdown("<h1>🎬 Netflix Style Movie Recommender</h1>", unsafe_allow_html=True)
+# Heading
+st.markdown("""
+<div style='text-align:center; margin-bottom:40px;'>
+
+<h1 style='color:#E50914; font-size:60px; margin-bottom:0px;'>
+🎬 CineMatch
+</h1>
+
+<h3 style='color:white; font-weight:300; margin-top:5px;'>
+Movie Recommendation System
+</h3>
+
+</div>
+""", unsafe_allow_html=True)
 
 
 # Movie selector
@@ -113,8 +118,8 @@ selected_movies_name = st.selectbox(
 )
 
 
-# Recommendation button
-if st.button('Recommend'):
+# Recommend button
+if st.button("Recommend"):
 
     names, posters = recommend(selected_movies_name)
 
