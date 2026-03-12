@@ -3,6 +3,18 @@ import pickle
 import pandas as pd
 import requests
 
+import os
+import gdown
+
+if not os.path.exists("movies_dict.pkl"):
+    gdown.download("https://drive.google.com/uc?id=1tT1P5za618N5Cr4wiomxHh7C6VH8IecH","movies_dict.pkl",quiet=False)
+
+if not os.path.exists("similarity.pkl"):
+    gdown.download("https://drive.google.com/uc?id=1Dg_qeKY2htFbORiidSRglKmUWQsGcGdg","similarity.pkl",quiet=False)
+
+if not os.path.exists("movies.pkl"):
+    gdown.download("https://drive.google.com/uc?id=12U7zhz6rH4oxldE5vvFnTmP4NJroxk9u","movies.pkl",quiet=False)
+
 def fetch_poster(movie_id):
     url = "https://api.themoviedb.org/3/movie/{}?api_key=3f666f231d759054c3df8192952f5b63&language=en-US".format(movie_id)
     response = requests.get(url)
